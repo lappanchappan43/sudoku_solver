@@ -1,0 +1,5 @@
+## Sudoku Solver
+> [Sudoku](https://en.wikipedia.org/wiki/Sudoku) is a logic-based,combinatorial number-placement puzzle. In classic sudoku, the objective is to fill a 9×9 grid with digits so that each column, each row, and each of the nine 3×3 subgrids that compose the grid (also called "boxes", "blocks", or "regions") contains all of the digits from 1 to 9. The puzzle setter provides a partially completed grid, which for a well-posed puzzle has a single solution. 
+> This program captures sudoku image and tends to solve the sudoku. We'll be using Backtracking algorithm.
+>> [Backtracking](https://dev.to/christinamcmahon/use-backtracking-algorithm-to-solve-sudoku-270) is a useful algorithm for solving problems with recursion by building a solution incrementally. Generally speaking, backtracking involves starting with a possible solution and if it doesn't work, you backtrack and try another solution until you find something that works. Backtracking is particularly helpful when solving constraint satisfaction problems such as crosswords, verbal arithmetic, and Sudoku.
+
