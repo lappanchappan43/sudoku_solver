@@ -1,6 +1,8 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Remove tf warnings from console
+
 import cv2
 import numpy as np
-import os
 
 from keras.models import load_model
 from train import normalize
