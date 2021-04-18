@@ -132,10 +132,17 @@ blank_img = np.zeros((warp.shape[0], warp.shape[1], 3), np.uint8)
 detect_img = display_number(predictions, blank_img)
 show_image(detect_img)
 
+a = np.asarray(predictions)
+a = np.where(a>0, 0, 1)
+
 predictions = to_matrix(predictions, 9)
 solver(predictions)
 print(predictions)
 # print_sudoku(predictions)
 solved = sum(predictions, [])
-detect_img = display_number(solved, blank_img)
+
+b = solved*a
+
+blank_img = np.zeros((warp.shape[0], warp.shape[1], 3), np.uint8)
+detect_img = display_number(b, blank_img)
 show_image(detect_img)
