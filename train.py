@@ -1,5 +1,5 @@
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Remove tf warnings from console
+# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Remove tf warnings from console
 
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -73,20 +73,18 @@ def model():
 
     return model
 
-def plot_graph(history):
+def show_graph(history, graph_type, val_type, title):
     plt.figure(1)
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
+    plt.plot(history.history[graph_type])
+    plt.plot(history.history[val_type])
     plt.legend(['training','validation'])
-    plt.title('Loss')
-    plt.xlabel('epoch')
-    plt.figure(2)
-    plt.plot(history.history['accuracy'])
-    plt.plot(history.history['val_accuracy'])
-    plt.legend(['training','validation'])
-    plt.title('Accuracy')
+    plt.title(title)
     plt.xlabel('epoch')
     plt.show()
+
+def plot_graph(history):
+    show_graph(history=history, graph_type='loss', val_type='val_loss', title='Loss')
+    show_graph(history=history, graph_type='accuracy', val_type='val_accuracy', title='Accuracy')
 
 if __name__ == '__main__':
     images, class_map = get_image_class()

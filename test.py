@@ -8,6 +8,8 @@ from keras.models import load_model
 from train import normalize
 
 model = load_model('model/model.h5')
+print(model.summary())
+
 for im in os.listdir('test'):
     img = cv2.imread(os.path.join('test', im))
 
