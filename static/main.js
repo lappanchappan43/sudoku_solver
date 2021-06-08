@@ -84,15 +84,19 @@ function upload_files() {
         },
         success: function(data){
 
-            $('#solve_section').attr("style", "display:block")
+            if (data['status'] == 'failed'){
+                alert('Please insert valid image')
+            }else{
+                $('#solve_section').attr("style", "display:block")
             
-            bytestring = data['solved']
-            image = bytestring.split('\'')[1]
-            imagebox.attr('src' , 'data:image/jpeg;base64,'+image)
+                bytestring = data['solved']
+                image = bytestring.split('\'')[1]
+                imagebox.attr('src' , 'data:image/jpeg;base64,'+image)
 
-            bytestring = data['processed']
-            image = bytestring.split('\'')[1]
-            $('#processed_image').attr('src' , 'data:image/jpeg;base64,'+image)
+                bytestring = data['processed']
+                image = bytestring.split('\'')[1]
+                $('#processed_image').attr('src' , 'data:image/jpeg;base64,'+image)
+            }
         }
     });
 

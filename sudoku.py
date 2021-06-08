@@ -1,5 +1,6 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Remove tf warnings from console
+from collections import Counter
 
 import cv2
 import numpy as np
@@ -157,17 +158,22 @@ if __name__ == '__main__':
     # show_image(detect_img)
 
     a = np.asarray(predictions)
-    a = np.where(a>0, 0, 1)
+    occurance = Counter(predictions)
 
-    predictions = to_matrix(predictions, SUDOKU_MATRIX)
-    solver(predictions, [SUDOKU_MATRIX, SUDOKU_MATRIX])
-    print(predictions)
-    # print_sudoku(predictions)
-    solved = sum(predictions, [])
+    if occurance[0] > 55:
+        print('FAIL')
+    else:
+        a = np.where(a>0, 0, 1)
 
-    b = solved*a
+        predictions = to_matrix(predictions, SUDOKU_MATRIX)
+        solver(predictions, [SUDOKU_MATRIX, SUDOKU_MATRIX])
+        print(predictions)
+        # print_sudoku(predictions)
+        solved = sum(predictions, [])
 
-    blank_img = np.zeros((warp.shape[0], warp.shape[1], 3), np.uint8)
-    # detect_img = display_number(b, blank_img)
-    detect_img = display_number(solved, blank_img, SUDOKU_MATRIX)
-    show_image(detect_img)
+        b = solved*a
+
+        blank_img = np.zeros((warp.shape[0], warp.shape[1], 3), np.uint8)
+        # detect_img = display_number(b, blank_img)
+        detect_img = display_number(solved, blank_img, SUDOKU_MATRIX)
+        show_image(detect_img)

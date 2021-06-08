@@ -43,21 +43,26 @@ def solve():
     blank_img = np.zeros((warp.shape[0], warp.shape[1], 3), np.uint8)
 
     a = np.asarray(predictions)
-    a = np.where(a>0, 0, 1)
-
-    predictions = to_matrix(predictions, SUDOKU_MATRIX)
-    solver(predictions, [SUDOKU_MATRIX, SUDOKU_MATRIX])
-    # print_sudoku(predictions)
-    solved = sum(predictions, [])
-
-    blank_img = np.zeros((warp.shape[0], warp.shape[1], 3), np.uint8)
-    # detect_img = display_number(b, blank_img)
-    detect_img = display_number(solved, blank_img, SUDOKU_MATRIX)
+    occurance = Counter(predictions)
     
-    solved_image = convert_image_base64(detect_img)
-    wrap_image = convert_image_base64(warp)
-    
-    return jsonify({'status':'succces', 'processed': str(wrap_image), 'solved':str(solved_image)})
+    if occurance[0] > 55:
+        return jsonify({'status':'failed'})
+    else:
+        a = np.where(a>0, 0, 1)
+
+        predictions = to_matrix(predictions, SUDOKU_MATRIX)
+        solver(predictions, [SUDOKU_MATRIX, SUDOKU_MATRIX])
+        # print_sudoku(predictions)
+        solved = sum(predictions, [])
+
+        blank_img = np.zeros((warp.shape[0], warp.shape[1], 3), np.uint8)
+        # detect_img = display_number(b, blank_img)
+        detect_img = display_number(solved, blank_img, SUDOKU_MATRIX)
+        
+        solved_image = convert_image_base64(detect_img)
+        wrap_image = convert_image_base64(warp)
+        
+        return jsonify({'status':'succces', 'processed': str(wrap_image), 'solved':str(solved_image)})
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=6006, debug=True, threaded=False)
