@@ -107,13 +107,17 @@ if __name__ == '__main__':
     history = model.fit_generator(datagen.flow(x=X_TRAIN, y=Y_TRAIN), epochs=10,
                         validation_data=(X_VALIDATION, Y_VALIDATION), shuffle=True)
 
-    plot_graph(history)
+    # plot_graph(history)
 
     score = model.evaluate(X_TEST,Y_TEST,verbose=0)
     print('Test Score = ',score[0])
     print('Test Accuracy =', score[1])
 
-    model.save('model/model.h5')
+    model_json = model.to_json()
+    with open("model/new_model.json", "w") as json_file:
+        json_file.write(model_json)
+
+    model.save_weights('model/new_model.h5')
 
     
 

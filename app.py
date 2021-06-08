@@ -60,4 +60,4 @@ def solve():
     return jsonify({'status':'succces', 'processed': str(wrap_image), 'solved':str(solved_image)})
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=6006, debug=True)
+    app.run(host='0.0.0.0', port=6006, debug=True, threaded=False)

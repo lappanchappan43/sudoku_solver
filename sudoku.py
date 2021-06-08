@@ -3,11 +3,17 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Remove tf warnings from console
 
 import cv2
 import numpy as np
-from keras.models import load_model
+from tensorflow.keras.models import model_from_json
 
 from solver import solver, print_sudoku
 
-MODEL = load_model('model/model.h5')
+json_file = open('model/new_model.json', 'r')
+loaded_model_json = json_file.read()
+json_file.close()
+MODEL = model_from_json(loaded_model_json)
+# load weights into new model
+MODEL.load_weights("model/new_model.h5")
+# MODEL = load_model('model/new_model.h5')
 
 # img = cv2.imread('sudoku_images/2.jpeg')
 
@@ -87,6 +93,7 @@ def split_box(img, SUDOKU_MATRIX):
 def predict(individual_grid, THRESHOLD):
     # Predict each grid
     global MODEL
+    # print(dir(MODEL))
     result = []
     for grid in individual_grid:
         grid_img = np.asarray(grid)
