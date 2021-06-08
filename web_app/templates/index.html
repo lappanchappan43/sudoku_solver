@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="static/main.css">
+    <title>Sudoku Solver</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark mb-4">
+        <a class="navbar-brand text-light" href="#">Sudoku Solver</a>
+      </nav>
+    
+    <div class="container">
+        <div class="file-upload mb-4">
+            <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Upload Image</button>
+            <div class="image-upload-wrap">
+                <input class="file-upload-input" name="file" id="file" type='file' onchange="readURL(this);" accept="image/*" />
+                <div class="drag-text">
+                    <h3>Drag and drop a file or select add Image</h3>
+                </div>
+            </div>
+            <div class="file-upload-content">
+                <img class="file-upload-image" src="#" alt="your image" />
+                <div class="image-title-wrap">
+                    <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded Image</span></button>
+                    <button type="submit" class="ml-3 btn btn-group-lg btn-info" onclick="upload_files();">Solve</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="overlay"></div>
+    <section id="solve_section">
+        <div class="container mb-3">
+            <div class="row">
+                <div class="col">
+                    <img id="processed_image" src="" alt="Processed Image" title="Processed Image" width="400" height="400">
+                </div>
+                <div class="col">
+                    <img id="imagebox" src="" alt="Solved Image" width="400" height="400" title="Solved Image">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="p-5" style="background-color: #adc8cf;">
+        <div class="container">
+            <h3 class="text-dark text-center">How it works?</h3>
+            <div class="row">
+                <div class="col-md-12 d-flex">
+                    <div class="col-md-8">
+                        <p class="text-justify mt-3">
+                            Sudoku is a logical based puzzle. Classically, Sudoku is of 9x9 grid, player insert number ranging from 1-9 such that each number appears only once in its horizontal, vertical lines and square(3x3) grid. To tackle this problem, we will be using backtracking algorithm. “Backtracking is an algorithmic-technique for solving problems recursively by trying to build a solution incrementally, one piece at a time, removing those solutions that fail to satisfy the constraints of the problem at any point of time (by time, here, is referred to the time elapsed till reaching any level of the search tree)”<a href="https://www.geeksforgeeks.org/backtracking-algorithms/">[Link]</a>
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <img src="static/index.jpg" style="height:180px; width: 180px;" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 mt-2">
+                    <div class="col">
+                        <p class="text-justify">
+                            First of all, an image of a Sudoku is taken irrespective to the angle. The image is uploaded, and dimension of Sudoku is 9x9. Using computer vision, image is read from base64 format. Once the image is obtained, we preprocess the image, converting the given image into grayscale, removing noises and thresholding. Then, contours are determined, from which the outer lines of Sudoku is determined by getting the joint lines having 4 corners (that forms a square or rectangle). One major question may arise, if image is tilted how can we get the the normal square or rectangle shape. In order to achieve this, we will be using warp perspective method. Once the (x1, y1) and (x2, y2) co-ordinates are determined, perspective transformation is applied. The returned image after transformed is then divided into sub-images. Meaning, if we have 9x9 dimension Sudoku, we will split the given Sudoku into 81 sub-images, I.e., image containing number of each grid.
+                        </p>
+
+                        <p class="text-justify">
+                            Second most important step is to convert the given Sudoku image into machine understandable format. In order to do so, we will training a sequential model to recognize the given number. For this, convolutional neural network is used. We will be using digit images from Char74k dataset. The model architecture is as follow:
+                        </p>
+
+                        <table class="table table-hover table-striped table-bordered table-dark">
+                            <thead>
+                                <tr>
+                                    <th colspan="12" class="text-center">Model: Sequential</th>
+                                </tr>
+                                <tr>
+                                    <th scope="col">Layer (Type)</th>
+                                    <th scope="col">Output Shape</th>
+                                    <th scope="col">Param</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>conv2d (Conv2D)</td>
+                                    <td>(None, 28, 28, 60)</td>
+                                    <td>1560</td>
+                                </tr>
+                                <tr>
+                                    <td>conv2d_1 (Conv2D)</td>
+                                    <td>(None, 24, 24, 60)</td>
+                                    <td>90060</td>
+                                </tr>
+                                <tr>
+                                    <td>max_pooling2d (MaxPooling2D)</td>
+                                    <td>(None, 12, 12, 60)</td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td>conv2d_2 (Conv2D)</td>
+                                    <td>(None, 10, 10, 30)</td>
+                                    <td>16230</td>
+                                </tr>
+                                <tr>
+                                    <td>conv2d_3 (Conv2D)</td>
+                                    <td>(None, 8, 8, 30)</td>
+                                    <td>8130</td>
+                                </tr>
+                                <tr>
+                                    <td>max_pooling2d_1 (MaxPooling2D)</td>
+                                    <td>(None, 4, 4, 30)</td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td>dropout (Dropout)</td>
+                                    <td>(None, 4, 4, 30)</td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td>flatten (Flatten)</td>
+                                    <td>(None, 480)</td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td>dense (Dense)</td>
+                                    <td>(None, 500)</td>
+                                    <td>240500</td>
+                                </tr>
+                                <tr>
+                                    <td>dropout_1 (Dropout)</td>
+                                    <td>(None, 500)</td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td>dense_1 (Dense)</td>
+                                    <td>(None, 10)</td>
+                                    <td>5010</td>
+                                </tr>
+                                <tr>
+                                    <th colspan="12">Total params: 361, 490</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="12">Trainable params: 361, 490</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="12">Non-trainable params: 0</th>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <p class="text-justify">
+                            The model accuracy was 0.96.
+                        </p>
+
+                        <img src="static/graph.png" alt="Model Graph" width="100%">
+                        
+                        <p class="text-justify mt-3">
+                            The 81 different images are then passed into the model to predict the number present within each grid The threshold for the digit recognition is set to 0.8. Once all the numbers are predicted, it is stored in a 2D matrix, which is then fed to Sudoku solver. So, now each number of 2D list is processed. If the number is 0 then place a number ranging from 1-9 basically, we place 1 at first. Then check if the inserted number is present in its respective row, column or 3x3 grid. If not the move forward within the list till next 0 is found. Then repeat the same process. What if a number contradicts the rule of being unique number within the row, column or 3x3 grid. Then, backtrack the inserted number and increment the number, check again if the number is unique or not. Basically we insert a number, check for its existences, if unique then move forward and if not the increment the number till 9. If all process is completed then the Sudoku is solved and returns the solved Sudoku if not, then the Sudoku cannot be solved. 
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="text-center">
+        <div class="p-3 text-white" style="background-color: #729ecd;">
+            <h6>&copy; Copyright 2021, Sunil Thapa. All Rights Reserved</h6>
+            <a href="https://codepen.io/aaronvanston/details/yNYOXR" class="text-dark">Design Reference</a>
+        </div>
+    </div>
+
+    <script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <script src="static/main.js"></script>
+</body>
+</html>
