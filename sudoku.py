@@ -11,14 +11,6 @@ MODEL = load_model('model/model.h5')
 
 # img = cv2.imread('sudoku_images/2.jpeg')
 
-img_name = input('Enter image name (Ex: image location (sudoku_images/1.jpg), enter 1.jpg): ') or '1.jpg'
-
-img = cv2.imread(f'sudoku_images/{img_name}')
-img = cv2.resize(img, (450, 450))
-
-THRESHOLD = float(input('Enter threshold value for digit recognition (Ex: if (80%) enter: 0.8): ') or '0.8')
-SUDOKU_MATRIX = int(input('Enter SUDOKU matrix (Ex: if 9x9 enter 9): ') or '9')
-
 def show_image(img):
     cv2.imshow('Image', img)
     cv2.waitKey(0)
@@ -76,11 +68,11 @@ def warp_image(img, cnts):
     warped_image = cv2.warpPerspective(img, new_warp_matrix, (450, 450))
     warped_image = cv2.cvtColor(warped_image,cv2.COLOR_BGR2GRAY)
 
-    show_image(warped_image)
+    # show_image(warped_image)
 
     return warped_image
 
-def split_box(img):
+def split_box(img, SUDOKU_MATRIX):
     # Split image into row 
     rows = np.vsplit(img, SUDOKU_MATRIX)
     individual_grid = list()
@@ -92,9 +84,9 @@ def split_box(img):
         
     return individual_grid
 
-def predict(individual_grid):
+def predict(individual_grid, THRESHOLD):
     # Predict each grid
-    global MODEL, THRESHOLD
+    global MODEL
     result = []
     for grid in individual_grid:
         grid_img = np.asarray(grid)
@@ -119,8 +111,7 @@ def to_matrix(numbers, n):
     # Convert the image 1D matrix to 2D matrix (Ex: [1, 2, 3, 4, 5, 6] -> [[1, 2, 3], [4, 5, 6]])
     return [numbers[i:i+n] for i in range(0, len(numbers), n)]
 
-def display_number(numbers, img):
-    global SUDOKU_MATRIX
+def display_number(numbers, img, SUDOKU_MATRIX):
     row, col = SUDOKU_MATRIX, SUDOKU_MATRIX
     width, height = int(img.shape[1]/row), int(img.shape[0]/col)
     
@@ -132,35 +123,44 @@ def display_number(numbers, img):
                 cv2.FONT_HERSHEY_SIMPLEX,  1, (250, 250, 250), 3, cv2.LINE_AA)
     return img
 
-show_image(img)
-threshImg = preprocess(img)
-cnts = contours(threshImg, img)
+if __name__ == '__main__':
+    img_name = input('Enter image name (Ex: image location (sudoku_images/1.jpg), enter 1.jpg): ') or '1.jpg'
 
-# reshape_cnts = cnts.reshape((4, 2))
-cnts = reorder_grid(cnts)
+    img = cv2.imread(f'sudoku_images/{img_name}')
+    img = cv2.resize(img, (450, 450))
 
-warp = warp_image(img, cnts)
-boxes = split_box(warp)
+    THRESHOLD = float(input('Enter threshold value for digit recognition (Ex: if (80%) enter: 0.8): ') or '0.8')
+    SUDOKU_MATRIX = int(input('Enter SUDOKU matrix (Ex: if 9x9 enter 9): ') or '9')
 
-predictions = predict(boxes)
+    show_image(img)
+    threshImg = preprocess(img)
+    cnts = contours(threshImg, img)
 
-blank_img = np.zeros((warp.shape[0], warp.shape[1], 3), np.uint8)
+    # reshape_cnts = cnts.reshape((4, 2))
+    cnts = reorder_grid(cnts)
 
-# detect_img = display_number(predictions, blank_img)
-# show_image(detect_img)
+    warp = warp_image(img, cnts)
+    boxes = split_box(warp, SUDOKU_MATRIX)
 
-a = np.asarray(predictions)
-a = np.where(a>0, 0, 1)
+    predictions = predict(boxes, THRESHOLD)
 
-predictions = to_matrix(predictions, SUDOKU_MATRIX)
-solver(predictions, [SUDOKU_MATRIX, SUDOKU_MATRIX])
-print(predictions)
-# print_sudoku(predictions)
-solved = sum(predictions, [])
+    blank_img = np.zeros((warp.shape[0], warp.shape[1], 3), np.uint8)
 
-b = solved*a
+    # detect_img = display_number(predictions, blank_img)
+    # show_image(detect_img)
 
-blank_img = np.zeros((warp.shape[0], warp.shape[1], 3), np.uint8)
-# detect_img = display_number(b, blank_img)
-detect_img = display_number(solved, blank_img)
-show_image(detect_img)
+    a = np.asarray(predictions)
+    a = np.where(a>0, 0, 1)
+
+    predictions = to_matrix(predictions, SUDOKU_MATRIX)
+    solver(predictions, [SUDOKU_MATRIX, SUDOKU_MATRIX])
+    print(predictions)
+    # print_sudoku(predictions)
+    solved = sum(predictions, [])
+
+    b = solved*a
+
+    blank_img = np.zeros((warp.shape[0], warp.shape[1], 3), np.uint8)
+    # detect_img = display_number(b, blank_img)
+    detect_img = display_number(solved, blank_img, SUDOKU_MATRIX)
+    show_image(detect_img)
