@@ -45,7 +45,7 @@ def solve():
     a = np.asarray(predictions)
     occurance = Counter(predictions)
     
-    if occurance[0] > 55:
+    if occurance[0] > 65:
         return jsonify({'status':'failed'})
     else:
         a = np.where(a>0, 0, 1)
