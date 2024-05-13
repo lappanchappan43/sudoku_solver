@@ -107,9 +107,10 @@ def predict(individual_grid, THRESHOLD):
         grid_img = grid_img.reshape(1, 32, 32, 1)
 
         # Predict the grid image
-        prediction = MODEL.predict_classes(grid_img)
+        
         pred = MODEL.predict(grid_img)
         prob = np.amax(pred)
+        prediction=np.argmax(pred,axis=1)
         
         result.append(prediction[0]) if prob > THRESHOLD else result.append(0)
 
