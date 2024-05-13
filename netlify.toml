@@ -1,0 +1,2 @@
+[build]
+  command = "pip install -r requirements.txt"  # Adjust the build command based on the project requirements
