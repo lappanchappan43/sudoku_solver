@@ -3,3 +3,4 @@
 > This program captures sudoku image and tends to solve the sudoku. We'll be using Backtracking algorithm.
 >> [Backtracking](https://dev.to/christinamcmahon/use-backtracking-algorithm-to-solve-sudoku-270) is a useful algorithm for solving problems with recursion by building a solution incrementally. Generally speaking, backtracking involves starting with a possible solution and if it doesn't work, you backtrack and try another solution until you find something that works. Backtracking is particularly helpful when solving constraint satisfaction problems such as crosswords, verbal arithmetic, and Sudoku.
 
+[Note: The free instance will spin down with inactivity, which can delay requests by 50 seconds or more.]
