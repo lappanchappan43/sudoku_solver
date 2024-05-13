@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 from PIL import Image
 import base64
+from serverless_wsgi import handle_request
 
 from sudoku import *
 
@@ -63,6 +64,8 @@ def solve():
         wrap_image = convert_image_base64(warp)
         
         return jsonify({'status':'succces', 'processed': str(wrap_image), 'solved':str(solved_image)})
+def handler(event, context):
+    return handle_request(app, event, context)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=6006, debug=True, threaded=False)
