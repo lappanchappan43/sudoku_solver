@@ -1,6 +1,6 @@
 Flask
 joblib
-Keras
+Keras==2.14.0
 Keras-Applications
 Keras-Preprocessing
 matplotlib
