@@ -55,3 +55,4 @@ Werkzeug==2.0.1
 wrapt==1.12.1
 zipp==3.4.1
 gunicorn
+serverless-wsgi
